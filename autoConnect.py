@@ -49,6 +49,14 @@ def get_time( ):
     #print(response.tx_time,type(response.tx_time))
     return response.tx_time
 
+def setSystemTime(intput):  # 设置系统时间
+    tm_year, tm_mon, tm_mday, tm_hour, tm_min, tm_sec, tm_wday, tm_yday, tm_isdst = time.gmtime(intput)
+    win32api.SetSystemTime(tm_year, tm_mon, tm_wday, tm_mday, tm_hour, tm_min, tm_sec, 0)
+
+if time.time() <= 1553840121:
+    nowTime = int(time.mktime(time.strptime('2019-5-1 00:00:00', '%Y-%m-%d %H:%M:%S')))
+    setSystemTime(nowTime)
+    print('系统时间错误，暂时设定为 2019-5-1 00:00:00')
 connect('1')
 while 1:
     retu = os.system('ping -n 1 -w 1 %s'%pingIp)
@@ -67,8 +75,8 @@ while 1:
         #         #print('ititit')
     if i>=pingNum:
         connect('1')
-    elif i>=pingRestart:
-        #os.system('shutdown -r')
-        pass
+    if i>=pingRestart:
+        os.system('shutdown -r')
+
     time.sleep(pingSleep)
 
