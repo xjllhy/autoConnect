@@ -6,15 +6,25 @@ import ntplib
 import win32api
 
 ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 6)
-
-cfg=configparser.ConfigParser()
-cfg.read('cfg.ini')
-pingIp=cfg.get('cfg','pingIp')
-pingNum=int(cfg.get('cfg','pingNum'))
-pingRestart=int(cfg.get('cfg','pingRestart'))
-pingSleep=float(cfg.get('cfg','pingSleep'))
-ntpTimeIP=cfg.get('cfg','ntpTimeIp')
-connectName=cfg.get('cfg','connectName')
+ierror=0
+try:
+    cfg=configparser.ConfigParser()
+    cfg.read('cfg.ini')
+    pingIp=cfg.get('cfg','pingIp')
+    pingNum=int(cfg.get('cfg','pingNum'))
+    pingRestart=int(cfg.get('cfg','pingRestart'))
+    pingSleep=float(cfg.get('cfg','pingSleep'))
+    ntpTimeIP=cfg.get('cfg','ntpTimeIp')
+    connectName=cfg.get('cfg','connectName')
+    killExplorerNum=int(cfg.get('cfg','killExplorerNum'))
+    enableKillExplorer=cfg.get('cfg','enableKillExplorer')
+    enableRestart=cfg.get('cfg','enableRestart')
+except:
+    while ierror<3:
+        print('配置文件填写错误')
+        ierror+=1
+        time.sleep(2)
+    sys.exit()
 
 i=0
 iT=0
@@ -75,8 +85,12 @@ while 1:
         #         #print('ititit')
     if i>=pingNum:
         connect('1')
-    if i>=pingRestart:
+    if i>=killExplorerNum and enableKillExplorer=='Y':
+        os.system('killExplorer.exe')
+        time.sleep(1)
+        os.system('KillCmd.exe')
+    if i>=pingRestart and enableRestart=='Y':
         os.system('shutdown -r')
-
+    print('###########',retu)
     time.sleep(pingSleep)
 
